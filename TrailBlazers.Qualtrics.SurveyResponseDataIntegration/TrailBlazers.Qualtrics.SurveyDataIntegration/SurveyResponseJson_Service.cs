@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 
-namespace TrailBlazers.Qualtrics.SurveyResponseExportToSql
+namespace TrailBlazers.Qualtrics.SurveyDataIntegration
 {
     internal class SurveyResponseJson_Service
     {
@@ -14,7 +14,7 @@ namespace TrailBlazers.Qualtrics.SurveyResponseExportToSql
             try
             {
                 //For local development
-                //"C:\\Users\\BrandonDuncan\\source\\repos\\TrailBlazers.Qualtrics.SurveyResponseExportToSql\\TrailBlazers.Qualtrics.SurveyResponseExportToSql\\development\\SurveyResponseExport.json"))
+                //"C:\\Users\\BrandonDuncan\\source\\repos\\TrailBlazers.Qualtrics.SurveyDataIntegration\\TrailBlazers.Qualtrics.SurveyDataIntegration\\development\\SurveyResponseExport.json"))
 
                 // Get Data Lake survey response JSON file based on survey id and export id passed in
                 var fileClient = GetDataLakeFileClient(accountName, dataLakeStorageKey, surveyId, exportId);

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TrailBlazers.Qualtrics.SurveyResponseExportToSql.Models
+namespace TrailBlazers.Qualtrics.SurveyDataIntegration.Models
 {
     public class SurveyResponseModel
     {
