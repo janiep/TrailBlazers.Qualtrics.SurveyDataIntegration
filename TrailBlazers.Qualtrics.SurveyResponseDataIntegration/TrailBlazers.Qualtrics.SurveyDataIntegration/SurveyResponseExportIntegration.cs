@@ -13,12 +13,12 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Data.SqlClient;
 using System.Text.RegularExpressions;
-using TrailBlazers.Qualtrics.SurveyResponseExportToSql.Models;
+using TrailBlazers.Qualtrics.SurveyResponseDataIntegration.Models;
 using Azure;
 using System.Net;
 using System.Linq;
 
-namespace TrailBlazers.Qualtrics.SurveyResponseExportToSql
+namespace TrailBlazers.Qualtrics.SurveyResponseDataIntegration
 {
     public static class SurveyResponseExportIntegration
     {
