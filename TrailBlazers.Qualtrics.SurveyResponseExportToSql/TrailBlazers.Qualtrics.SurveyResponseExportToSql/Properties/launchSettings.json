@@ -1,9 +1,0 @@
-{
-  "profiles": {
-    "TrailBlazers.Qualtrics.SurveyResponseExportToSql": {
-      "commandName": "Project",
-      "commandLineArgs": "--port 7192",
-      "launchBrowser": false
-    }
-  }
-}
