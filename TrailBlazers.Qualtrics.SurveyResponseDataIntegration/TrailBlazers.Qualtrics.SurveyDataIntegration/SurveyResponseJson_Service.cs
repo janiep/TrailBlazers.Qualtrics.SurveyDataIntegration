@@ -13,8 +13,14 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration
         {
             try
             {
-                //For local development
-                //"C:\\Users\\BrandonDuncan\\source\\repos\\TrailBlazers.Qualtrics.SurveyDataIntegration\\TrailBlazers.Qualtrics.SurveyDataIntegration\\development\\SurveyResponseExport.json"))
+                //FOR LOCAL DEBUGGING/DEVELOPMENT - Point this to a survey response export JSON file on your machine and comment out the code block following this one
+                //var fileName = "C:\\Users\\BrandonDuncan\\source\\repos\\Trail Blazers\\TrailBlazers.Qualtrics.SurveyResponseDataIntegration\\TrailBlazers.Qualtrics.SurveyDataIntegration\\development\\SurveyResponseExport.json";
+                //using (StreamReader r = new StreamReader(fileName))
+                //{
+                //    string json = r.ReadToEnd();
+                //    dynamic array = JsonConvert.DeserializeObject(json);
+                //    return array;
+                //}
 
                 // Get Data Lake survey response JSON file based on survey id and export id passed in
                 var fileClient = GetDataLakeFileClient(accountName, dataLakeStorageKey, surveyId, exportId);

@@ -139,15 +139,37 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration
                                 var newQuestionResponse = new QuestionResponseModel();
                                 newQuestionResponse.ResponseId = responseId;
                                 newQuestionResponse.SurveyId = surveyId;
+
                                 switch (answer.Name)
                                 {
-                                    
+                                    //Ex. QID7
+                                    case var questionId when new Regex(@"^QID\d+$").IsMatch(questionId):
+                                        newQuestionResponse.QuestionId = questionId;
+                                        //Get label value from labels object if it exists
+                                        var labelValue = response.labels[questionId];
+                                        if (labelValue != null)
+                                        {
+                                            if(labelValue is JArray)
+                                            { //Ex. "QID7": [ "Covid-19 Health & Safety", "Staff" ],
+                                                newQuestionResponse.QuestionResponse = String.Join(",", labelValue.ToObject<string[]>());
+                                            } else //Assume label value it is an object that can be converted to string
+                                            {
+                                                newQuestionResponse.QuestionResponse = labelValue.ToString();
+                                            }
+                                        }
+                                        else
+                                        {   //If not found in labels, use answer from values object
+                                            newQuestionResponse.QuestionResponse = (string)answer.Value;
+                                        }
+                                        newQuestionResponse.Id = newQuestionResponse.ResponseId + "_" + newQuestionResponse.QuestionId; //Set primary key (responseid_questionid)
+                                        surveyQuestionResponses.Add(newQuestionResponse);
+                                        break;
                                     //Ex. QID49_1
                                     case var questionId when new Regex(@"^QID\d+_\d+$").IsMatch(questionId):
                                         newQuestionResponse.QuestionId = questionId;
-                                        //Get label value from labels object
-                                        var answerLabel = response.labels.Value<string>(questionId) ?? "";
-                                        if (answerLabel != "")
+                                        //Get label value from labels object if it exists
+                                        var answerLabel = response.labels[questionId];
+                                        if (answerLabel != null)
                                         {
                                             newQuestionResponse.QuestionResponse = answerLabel;
                                         }
