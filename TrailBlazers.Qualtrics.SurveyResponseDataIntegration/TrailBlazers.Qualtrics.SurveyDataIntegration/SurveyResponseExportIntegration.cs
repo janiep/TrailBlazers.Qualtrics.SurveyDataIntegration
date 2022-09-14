@@ -17,6 +17,7 @@ using TrailBlazers.Qualtrics.SurveyDataIntegration.Models;
 using Azure;
 using System.Net;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace TrailBlazers.Qualtrics.SurveyDataIntegration
 {
@@ -149,17 +150,11 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration
                                         var labelValue = response.labels[questionId];
                                         if (labelValue != null)
                                         {
-                                            if(labelValue is JArray)
-                                            { //Ex. "QID7": [ "Covid-19 Health & Safety", "Staff" ],
-                                                newQuestionResponse.QuestionResponse = String.Join(",", labelValue.ToObject<string[]>());
-                                            } else //Assume label value it is an object that can be converted to string
-                                            {
-                                                newQuestionResponse.QuestionResponse = labelValue.ToString();
-                                            }
+                                            newQuestionResponse.QuestionResponse = GetValueFromJson(labelValue);
                                         }
                                         else
                                         {   //If not found in labels, use answer from values object
-                                            newQuestionResponse.QuestionResponse = (string)answer.Value;
+                                            newQuestionResponse.QuestionResponse = GetValueFromJson(answer.Value);
                                         }
                                         newQuestionResponse.Id = newQuestionResponse.ResponseId + "_" + newQuestionResponse.QuestionId; //Set primary key (responseid_questionid)
                                         surveyQuestionResponses.Add(newQuestionResponse);
@@ -171,7 +166,7 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration
                                         var answerLabel = response.labels[questionId];
                                         if (answerLabel != null)
                                         {
-                                            newQuestionResponse.QuestionResponse = answerLabel;
+                                            newQuestionResponse.QuestionResponse = answerLabel.ToString();
                                         }
                                         else
                                         {   //If not found in labels, use answer from values object
@@ -204,6 +199,20 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration
 
 
             return new OkObjectResult(surveyQuestionResponses);
+        }
+
+        public static string GetValueFromJson(dynamic value)
+        {
+            var returnValue = "";
+            if (value is JArray)
+            { //Handle array value for answer Ex. "QID7": [ "Covid-19 Health & Safety", "Staff" ],
+                returnValue = String.Join(",", value.ToObject<string[]>());
+            }
+            else //Assume label value is an object that can be converted to string
+            {
+                returnValue = value.ToString();
+            }
+            return returnValue;
         }
 
         [FunctionName("SurveyQuestionIntegration")]
