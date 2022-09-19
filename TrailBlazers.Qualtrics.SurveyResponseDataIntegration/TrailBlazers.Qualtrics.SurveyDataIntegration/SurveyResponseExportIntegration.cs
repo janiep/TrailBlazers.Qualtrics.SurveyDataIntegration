@@ -68,6 +68,9 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration
                                     case "duration":
                                         newResponse.Duration = answer.Value;
                                         break;
+                                    case "finished":
+                                        newResponse.Finished = answer.Value;
+                                        break;
                                     case "ContactID":
                                         newResponse.ContactId = answer.Value;
                                         break;
@@ -77,20 +80,23 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration
                                     case "userLanguage":
                                         newResponse.ContactLanguage = answer.Value;
                                         break;
-                                    case "Section":
-                                        newResponse.Section = answer.Value;
-                                        break;
                                     case "EventCode":
                                         newResponse.EventCode = answer.Value;
                                         break;
                                     case "EventDate":
                                         newResponse.EventDate = answer.Value;
                                         break;
+                                    case "EventName":
+                                        newResponse.EventName = answer.Value;
+                                        break;
+                                    case "Section":
+                                        newResponse.Section = answer.Value;
+                                        break;
                                     case "ZipCode":
                                         newResponse.ZipCode = answer.Value;
                                         break;
-                                    case "EventName":
-                                        newResponse.EventName = answer.Value;
+                                    case "Category":
+                                        newResponse.Category = answer.Value;
                                         break;
                                     default:
                                         break;
@@ -140,40 +146,77 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration
                                 var newQuestionResponse = new QuestionResponseModel();
                                 newQuestionResponse.ResponseId = responseId;
                                 newQuestionResponse.SurveyId = surveyId;
-
+                                
                                 switch (answer.Name)
                                 {
                                     //Ex. QID7
                                     case var questionId when new Regex(@"^QID\d+$").IsMatch(questionId):
                                         newQuestionResponse.QuestionId = questionId;
-                                        //Get label value from labels object if it exists
+
+                                        //Get answer value if value is number - This is the answer in numeric format. Ex. "5"
+                                        try
+                                        {
+                                            var answerValue = answer.Value;
+                                            var answerValueType = answerValue.Value.GetType();
+                                            if (answerValueType == typeof(int) || answerValueType == typeof(long))
+                                            {
+                                                newQuestionResponse.QuestionResponseNumeric = answerValue;
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            //Do nothing
+                                            //This is likely the result of encountering a value that is not a numeric value
+                                        }
+
+                                        //Get label value from labels object if it exists - This is the answer written out. Ex. "5- Extremely Satisfied"
                                         var labelValue = response.labels[questionId];
                                         if (labelValue != null)
                                         {
                                             newQuestionResponse.QuestionResponse = GetValueFromJson(labelValue);
                                         }
-                                        else
-                                        {   //If not found in labels, use answer from values object
-                                            newQuestionResponse.QuestionResponse = GetValueFromJson(answer.Value);
-                                        }
+
                                         newQuestionResponse.Id = newQuestionResponse.ResponseId + "_" + newQuestionResponse.QuestionId; //Set primary key (responseid_questionid)
-                                        surveyQuestionResponses.Add(newQuestionResponse);
+                                        
+                                        //Add question response to list only if it has a valid response
+                                        if(newQuestionResponse.QuestionResponse != null || newQuestionResponse.QuestionResponseNumeric != null)
+                                        {
+                                            surveyQuestionResponses.Add(newQuestionResponse);
+                                        }
+
                                         break;
                                     //Ex. QID49_1
                                     case var questionId when new Regex(@"^QID\d+_\d+$").IsMatch(questionId):
                                         newQuestionResponse.QuestionId = questionId;
-                                        //Get label value from labels object if it exists
-                                        var answerLabel = response.labels[questionId];
-                                        if (answerLabel != null)
+
+                                        //Get answer value if value is number - This is the answer in numeric format. Ex. "5"
+                                        try
                                         {
-                                            newQuestionResponse.QuestionResponse = answerLabel.ToString();
+                                            var answerValue = answer.Value;
+                                            var answerValueType = answerValue.Value.GetType();
+                                            if (answerValueType == typeof(int) || answerValueType == typeof(long))
+                                            {
+                                                newQuestionResponse.QuestionResponseNumeric = answerValue;
+                                            }
                                         }
-                                        else
-                                        {   //If not found in labels, use answer from values object
-                                            newQuestionResponse.QuestionResponse = (string)answer.Value;
+                                        catch (Exception ex)
+                                        {
+                                            //Do nothing
+                                            //This is likely the result of encountering a value that is not a numeric value
+                                        }
+
+                                        //Get label value from labels object if it exists
+                                        var labelValue2 = response.labels[questionId];
+                                        if (labelValue2 != null)
+                                        {
+                                            newQuestionResponse.QuestionResponse = GetValueFromJson(labelValue2);
                                         }
                                         newQuestionResponse.Id = newQuestionResponse.ResponseId + "_" + newQuestionResponse.QuestionId; //Set primary key (responseid_questionid)
-                                        surveyQuestionResponses.Add(newQuestionResponse);
+                                                                                                                                        //Add question response to list only if it has a valid response
+                                        if (newQuestionResponse.QuestionResponse != null || newQuestionResponse.QuestionResponseNumeric != null)
+                                        {
+                                            surveyQuestionResponses.Add(newQuestionResponse);
+                                        }
                                         break;
                                     //Ex. QID50_TEXT
                                     case var questionId when new Regex(@"^(QID\d+)_TEXT$").IsMatch(questionId):
@@ -248,12 +291,14 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration
                         continue; //Skip to next question
                     }
 
-                    //Handle matrix question
-                    if ((string)question["QuestionType"] == "Matrix")
+                    //Handle matrix question or multiple answer question
+                    if (newQuestion.QuestionType == "Matrix" || (newQuestion.QuestionType == "MC" && newQuestion.Selector == "MAVR"))
                     {
                         foreach (var choice in question["Choices"])
                         {
-                            //Ex.
+                            //Ex. The following would become 6 separate question records
+                            //QID9_1, QID_2, QID_3, etc.
+                            //
                             //"Choices": {
                             //    "1": {
                             //          "Display": "Taste"
@@ -270,11 +315,9 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration
                             //    "5": {
                             //          "Display": "Wait Time"
                             //    },
-                            //    "7": {
+                            //    "6": {
                             //          "Display": "Cashless Payment"
                             //    }
-                            //This will become 6 separate question records
-                            //QID9_1, QID_2, QID_3, etc.
 
                             Console.WriteLine("{0}\n", choice);
                             var newChoiceQuestion = new SurveyQuestionModel();
@@ -289,16 +332,16 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration
                             newChoiceQuestion.SubSelector = newQuestion.SubSelector;
                             newChoiceQuestion.Id = surveyId + "_" + newChoiceQuestion.QuestionId;
 
-                            //Get matrix display label
+                            //Get matrix/multiple choice display label
                             var children = choice.Children().ToList();
                             foreach (var token in children)
                             {
                                 Console.WriteLine(token.ToString());
-                                var test = token.SelectToken("Display") ?? null;
-                                if(test != null)
+                                var displayValue = token.SelectToken("Display") ?? null;
+                                if(displayValue != null)
                                 {
-                                    newChoiceQuestion.MatrixOption = test.Value<string>();
-                                    break; //Break loop since we found the display matrix value
+                                    newChoiceQuestion.MatrixOption = displayValue.Value<string>();
+                                    break; //Break loop since we found the display matrix/multiple choice value
                                 }
                             }
                             

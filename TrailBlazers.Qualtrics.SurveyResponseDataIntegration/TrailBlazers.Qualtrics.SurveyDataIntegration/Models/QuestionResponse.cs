@@ -13,5 +13,6 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration.Models
         public string SurveyId { get; set; }
         public string QuestionId { get; set; }
         public string QuestionResponse { get; set; }
+        public string QuestionResponseNumeric { get; set; }
     }
 }

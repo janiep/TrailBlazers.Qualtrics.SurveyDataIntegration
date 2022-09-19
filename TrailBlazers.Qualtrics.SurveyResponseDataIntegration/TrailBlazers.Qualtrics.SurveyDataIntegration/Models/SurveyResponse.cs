@@ -21,5 +21,7 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration.Models
         public string EventDate { get; set; }
         public string ZipCode { get; set; }
         public string EventName { get; set; }
+        public string Category { get; set; }
+        public string Finished { get; set; }
     }
 }
