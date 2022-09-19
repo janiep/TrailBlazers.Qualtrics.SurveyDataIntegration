@@ -6,18 +6,11 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
-using System.Collections;
-using System.Data.SqlClient;
 using System.Text.RegularExpressions;
 using TrailBlazers.Qualtrics.SurveyDataIntegration.Models;
-using Azure;
-using System.Net;
 using System.Linq;
-using System.Linq.Expressions;
 
 namespace TrailBlazers.Qualtrics.SurveyDataIntegration
 {
@@ -292,7 +285,7 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration
                     }
 
                     //Handle matrix question or multiple answer question
-                    if (newQuestion.QuestionType == "Matrix" || (newQuestion.QuestionType == "MC" && newQuestion.Selector == "MAVR"))
+                    if (newQuestion.QuestionType == "Matrix")
                     {
                         foreach (var choice in question["Choices"])
                         {
@@ -319,7 +312,7 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration
                             //          "Display": "Cashless Payment"
                             //    }
 
-                            Console.WriteLine("{0}\n", choice);
+                            //Console.WriteLine("{0}\n", choice);
                             var newChoiceQuestion = new SurveyQuestionModel();
 
                             newChoiceQuestion.SurveyId = surveyId;
