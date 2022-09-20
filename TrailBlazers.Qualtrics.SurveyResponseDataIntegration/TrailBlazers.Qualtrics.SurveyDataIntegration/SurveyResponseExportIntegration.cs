@@ -271,6 +271,7 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration
                     var newQuestion = new SurveyQuestionModel();
                     newQuestion.SurveyId = surveyId; //Ex. SV_afMzammycfmSPXw
                     newQuestion.QuestionId = (string)question["QuestionID"]; //Ex. QID9
+                    newQuestion.QuestionDisplayId = (string)question["DataExportTag"]; //Ex. Q10
                     newQuestion.QuestionText = (string)question["QuestionText"];
                     newQuestion.QuestionDescription = (string)question["QuestionDescription"];
                     newQuestion.QuestionType = (string)question["QuestionType"];
@@ -318,6 +319,7 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration
                             newChoiceQuestion.SurveyId = surveyId;
                             dynamic choiceObj = choice; //Convert to dynamic obj first to access Name
                             newChoiceQuestion.QuestionId = newQuestion.QuestionId + "_" + choiceObj.Name;
+                            newChoiceQuestion.QuestionDisplayId = newQuestion.QuestionDisplayId;
                             newChoiceQuestion.QuestionText = newQuestion.QuestionText;
                             newChoiceQuestion.QuestionDescription = newQuestion.QuestionDescription;
                             newChoiceQuestion.QuestionType = newQuestion.QuestionType;

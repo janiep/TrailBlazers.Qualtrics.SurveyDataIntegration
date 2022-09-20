@@ -10,6 +10,7 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration.Models
     {
         public string Id { get; set; }
         public string QuestionId { get; set; }
+        public string QuestionDisplayId { get; set; }
         public string SurveyId { get; set; }
         public string QuestionDescription { get; set; }
         public string QuestionText { get; set; }
