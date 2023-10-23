@@ -16,6 +16,7 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration
 {
     public static class SurveyResponseExportIntegration
     {
+        private static string _storageAccount = Environment.GetEnvironmentVariable("StorageAccount");
         private static string _dataLakeStorageKey = Environment.GetEnvironmentVariable("DataLakeStorageKey");
 
         [FunctionName("SurveyResponseExportIntegration_SurveyResponse")]
@@ -25,7 +26,7 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration
         {
             //Get JSON from survey export endpoint
             var surveyResponseService = new SurveyResponseJson_Service();
-            var surveyResponseJson = surveyResponseService.LoadJson(surveyId, exportId, "std365appendonlyprod001", _dataLakeStorageKey);
+            var surveyResponseJson = surveyResponseService.LoadJson(surveyId, exportId, _storageAccount, _dataLakeStorageKey);
 
             List<SurveyResponseModel> surveyResponses = new List<SurveyResponseModel>();
 
@@ -64,32 +65,38 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration
                                     case "finished":
                                         newResponse.Finished = answer.Value;
                                         break;
-                                    case "ContactID":
+                                    case "ContactID" or "CID":
                                         newResponse.ContactId = answer.Value;
                                         break;
-                                    case "Email":
+                                    case "Email" or "EML":
                                         newResponse.ContactEmail = answer.Value;
                                         break;
                                     case "userLanguage":
                                         newResponse.ContactLanguage = answer.Value;
                                         break;
-                                    case "EventCode":
+                                    case "EventCode" or "EVC":
                                         newResponse.EventCode = answer.Value;
                                         break;
-                                    case "EventDate":
+                                    case "EventDate" or "EVD":
                                         newResponse.EventDate = answer.Value;
                                         break;
-                                    case "EventName":
+                                    case "EventName" or "EVN":
                                         newResponse.EventName = answer.Value;
                                         break;
-                                    case "Section":
+                                    case "Section" or "SEC":
                                         newResponse.Section = answer.Value;
                                         break;
-                                    case "ZipCode":
+                                    case "ZipCode" or "ZIP":
                                         newResponse.ZipCode = answer.Value;
                                         break;
-                                    case "Category":
+                                    case "Category" or "CAT":
                                         newResponse.Category = answer.Value;
+                                        break;
+                                    case "Type" or "TYP":
+                                        newResponse.Type = answer.Value;
+                                        break;
+                                    case "Premium" or "DES":
+                                        newResponse.Designation = answer.Value;
                                         break;
                                     default:
                                         break;
@@ -119,7 +126,7 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration
         {
             //Get JSON from survey export endpoint
             var surveyResponseService = new SurveyResponseJson_Service();
-            var surveyResponseJson = surveyResponseService.LoadJson(surveyId, exportId, "std365appendonlyprod001", _dataLakeStorageKey);
+            var surveyResponseJson = surveyResponseService.LoadJson(surveyId, exportId, _storageAccount, _dataLakeStorageKey);
 
             List<QuestionResponseModel> surveyQuestionResponses = new List<QuestionResponseModel>();
 

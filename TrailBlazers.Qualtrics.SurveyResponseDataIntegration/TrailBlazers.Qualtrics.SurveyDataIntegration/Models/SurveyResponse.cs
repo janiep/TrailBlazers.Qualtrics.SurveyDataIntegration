@@ -23,5 +23,7 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration.Models
         public string EventName { get; set; }
         public string Category { get; set; }
         public string Finished { get; set; }
+        public string Type { get; set; }
+        public string Designation { get; set; }
     }
 }
