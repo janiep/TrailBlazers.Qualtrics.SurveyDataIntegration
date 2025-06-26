@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using TrailBlazers.Qualtrics.SurveyDataIntegration.Models;
 using System.Linq;
+using System.ComponentModel;
 
 namespace TrailBlazers.Qualtrics.SurveyDataIntegration
 {
@@ -51,12 +52,19 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration
                             newResponse.ResponseId = response.responseId;
                             foreach (var answer in response.values)
                             {
-                                switch (answer.Name)
+                                var answerLower = answer.Name.ToLower();
+                                switch (answerLower)
                                 {
-                                    case "startDate":
+                                    case "responseid":
+                                        newResponse.ResponseId = answer.Value;
+                                        break;
+                                    case "surveyid":
+                                        newResponse.ResponseId = answer.Value;
+                                        break;
+                                    case "startdate":
                                         newResponse.StartDate = answer.Value;
                                         break;
-                                    case "endDate":
+                                    case "enddate":
                                         newResponse.EndDate = answer.Value;
                                         break;
                                     case "duration":
@@ -65,38 +73,8 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration
                                     case "finished":
                                         newResponse.Finished = answer.Value;
                                         break;
-                                    case "ContactID" or "CID":
-                                        newResponse.ContactId = answer.Value;
-                                        break;
-                                    case "Email" or "EML":
-                                        newResponse.ContactEmail = answer.Value;
-                                        break;
-                                    case "userLanguage":
+                                    case string x when answerLower.Contains("language"):
                                         newResponse.ContactLanguage = answer.Value;
-                                        break;
-                                    case "EventCode" or "EVC":
-                                        newResponse.EventCode = answer.Value;
-                                        break;
-                                    case "EventDate" or "EVD":
-                                        newResponse.EventDate = answer.Value;
-                                        break;
-                                    case "EventName" or "EVN":
-                                        newResponse.EventName = answer.Value;
-                                        break;
-                                    case "Section" or "SEC":
-                                        newResponse.Section = answer.Value;
-                                        break;
-                                    case "ZipCode" or "ZIP":
-                                        newResponse.ZipCode = answer.Value;
-                                        break;
-                                    case "Category" or "CAT":
-                                        newResponse.Category = answer.Value;
-                                        break;
-                                    case "Type" or "TYP":
-                                        newResponse.Type = answer.Value;
-                                        break;
-                                    case "Premium" or "DES":
-                                        newResponse.Designation = answer.Value;
                                         break;
                                     default:
                                         break;
