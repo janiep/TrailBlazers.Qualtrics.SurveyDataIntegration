@@ -18,16 +18,16 @@ jobs:
 
       - name: Build
         run: dotnet build --configuration Release
-        working-directory: TrailBlazers.Qualtrics.SurveyDataIntegration/TrailBlazers.Qualtrics.SurveyDataIntegration
+        working-directory: TrailBlazers.Qualtrics.SurveyResponseDataIntegration/TrailBlazers.Qualtrics.SurveyDataIntegration
 
       - name: Publish
         run: dotnet publish --configuration Release --output ./publish
-        working-directory: TrailBlazers.Qualtrics.SurveyDataIntegration/TrailBlazers.Qualtrics.SurveyDataIntegration
+        working-directory: TrailBlazers.Qualtrics.SurveyResponseDataIntegration/TrailBlazers.Qualtrics.SurveyDataIntegration
 
       - name: Deploy to Azure Staging
         uses: Azure/functions-action@v1
         with:
           app-name: func-dw-qualtrics-survey-integration
           slot-name: staging
-          package: TrailBlazers.Qualtrics.SurveyDataIntegration/TrailBlazers.Qualtrics.SurveyDataIntegration/publish
+          package: TrailBlazers.Qualtrics.SurveyResponseDataIntegration/TrailBlazers.Qualtrics.SurveyDataIntegration/publish
           publish-profile: ${{ secrets.AZURE_FUNC_DW_QUALTRICS_PUBLISH_PROFILE_STAGING }}
