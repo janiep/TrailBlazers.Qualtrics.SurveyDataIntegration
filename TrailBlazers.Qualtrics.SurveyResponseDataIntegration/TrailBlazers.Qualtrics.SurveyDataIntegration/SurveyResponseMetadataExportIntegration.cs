@@ -18,7 +18,7 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration
     {
         private static string _storageAccount = Environment.GetEnvironmentVariable("StorageAccount");
         private static string _dataLakeStorageKey = Environment.GetEnvironmentVariable("DataLakeStorageKey");
-        private static List<string> _ignoreFieldList = new List<string>{ "responseid", "surveyid", "contactlanguage", "duration", "startdate", "enddate", "finished", "userlanguage", "_recordId" };
+        private static List<string> _ignoreFieldList = new List<string>{ "responseid", "surveyid", "contactlanguage", "duration", "startdate", "enddate", "finished", "userlanguage", "_recordId","lastseenquestions" };
 
         [FunctionName("SurveyResponseMetadataExportIntegration_SurveyResponse")]
         public static async Task<IActionResult> RunSurveyResponseMetadataIntegration(
