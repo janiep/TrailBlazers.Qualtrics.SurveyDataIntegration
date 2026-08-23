@@ -41,7 +41,8 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration
         public static DataLakeFileClient GetDataLakeFileClient(string accountName, string accountKey, string surveyId, string exportId)
         {
             StorageSharedKeyCredential sharedKeyCredential = new StorageSharedKeyCredential(accountName, accountKey);
-            return new DataLakeFileClient(new Uri("https://std365appendonlyprod001.blob.core.windows.net/qualtrics-survey-response-export/unzipped/" + surveyId + "_" + exportId + "_surveyresponses.json"), sharedKeyCredential);
+            //return new DataLakeFileClient(new Uri("https://std365appendonlyprod001.blob.core.windows.net/qualtrics-survey-response-export/unzipped/" + surveyId + "_" + exportId + "_surveyresponses.json"), sharedKeyCredential);
+            return new DataLakeFileClient(new Uri("https://" + accountName + ".blob.core.windows.net/qualtrics-survey-response-export/unzipped/" + surveyId + "_" + exportId + "_surveyresponses.json"), sharedKeyCredential);
         }
 
     }
