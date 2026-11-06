@@ -76,6 +76,9 @@ namespace TrailBlazers.Qualtrics.SurveyDataIntegration
                                     case string x when answerLower.Contains("language"):
                                         newResponse.ContactLanguage = answer.Value;
                                         break;
+                                    case "eml":
+                                        newResponse.ContactEmail = answer.Value;
+                                        break;
                                     default:
                                         break;
                                 }
